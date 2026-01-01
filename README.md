@@ -645,7 +645,6 @@ This project is licensed under the **MIT License** - see [LICENSE](LICENSE) file
 ## Support & Community
 
 - **Issues**: https://github.com/Pavelevich/tetsuonode/issues
-- **Discussions**: https://github.com/Pavelevich/tetsuonode/discussions
 - **Twitter**: @tetsuoarena
 - **Email**: support@tetsuoarena.com
 
