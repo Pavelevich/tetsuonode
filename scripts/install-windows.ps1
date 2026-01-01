@@ -1,18 +1,11 @@
 # TETSUO Node Installer for Windows
-# Run with: irm https://raw.githubusercontent.com/Pavelevich/tetsuonode/main/scripts/install-windows.ps1 | iex
+# Safe installation guide: See INSTALL.md for secure setup
+# Note: Administrator privileges only required for optional Windows service installation
 
-Write-Host "════════════════════════════════════════════════════════════════════════════════"
+Write-Host "========================================================================"
 Write-Host "                    TETSUO NODE - WINDOWS INSTALLER"
-Write-Host "════════════════════════════════════════════════════════════════════════════════"
+Write-Host "========================================================================"
 Write-Host ""
-
-# Check if running as Administrator
-$isAdmin = ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")
-if (-not $isAdmin) {
-    Write-Host "[ERROR] This script must be run as Administrator"
-    Write-Host "Please run PowerShell as Administrator and try again"
-    exit 1
-}
 
 Write-Host "[INFO] Checking prerequisites..."
 Write-Host ""
@@ -22,6 +15,7 @@ if (Get-Command git -ErrorAction SilentlyContinue) {
     Write-Host "[OK] Git found"
 } else {
     Write-Host "[ERROR] Git not found. Please install from: https://git-scm.com/download/win"
+    Write-Host "After installing Git, run this script again."
     exit 1
 }
 
@@ -35,7 +29,7 @@ if (Get-Command cl -ErrorAction SilentlyContinue) {
     Write-Host "   Download from: https://visualstudio.microsoft.com/downloads/"
     Write-Host "   Select 'Desktop development with C++'"
     Write-Host ""
-    $response = Read-Host "Continue anyway? (y/n)"
+    $response = Read-Host "Continue anyway? (NOT RECOMMENDED) (y/n)"
     if ($response -ne 'y') {
         exit 1
     }
@@ -43,19 +37,59 @@ if (Get-Command cl -ErrorAction SilentlyContinue) {
 
 Write-Host ""
 Write-Host "[INFO] Cloning TETSUO Core..."
+
+# Validate work directory path
 $workDir = "$env:USERPROFILE\tetsuonode"
-if (Test-Path $workDir) {
-    Remove-Item -Path $workDir -Recurse -Force
+
+if (-not (Test-Path $env:USERPROFILE)) {
+    Write-Host "[ERROR] Invalid user profile directory"
+    exit 1
 }
-git clone https://github.com/Pavelevich/tetsuonode.git $workDir
 
-cd "$workDir\tetsuo-core"
+# Warn if directory exists
+if (Test-Path $workDir) {
+    Write-Host "[WARNING] $workDir already exists and will be removed"
+    $response = Read-Host "Continue? (y/n)"
+    if ($response -ne 'y') {
+        exit 1
+    }
+    try {
+        Remove-Item -Path $workDir -Recurse -Force -ErrorAction Stop
+    } catch {
+        Write-Host "[ERROR] Failed to remove existing directory: $_"
+        exit 1
+    }
+}
 
-Write-Host ""
+# Clone repository
+try {
+    git clone https://github.com/Pavelevich/tetsuonode.git $workDir
+    if ($LASTEXITCODE -ne 0) {
+        throw "Git clone failed with exit code $LASTEXITCODE"
+    }
+} catch {
+    Write-Host "[ERROR] Failed to clone repository: $_"
+    exit 1
+}
+
+# Change to tetsuo-core directory
+Set-Location "$workDir\tetsuo-core" -ErrorAction Stop
+
 Write-Host "[INFO] Creating configuration directory..."
 $dataDir = "$env:APPDATA\Tetsuo\.tetsuo"
+
 if (-not (Test-Path $dataDir)) {
     New-Item -ItemType Directory -Path $dataDir -Force | Out-Null
+}
+
+# Secure directory permissions (Windows)
+try {
+    $acl = Get-Acl $dataDir
+    # Remove inheritance to ensure only owner has access
+    $acl.SetAccessRuleProtection($true, $false)
+    Set-Acl -Path $dataDir -AclObject $acl
+} catch {
+    Write-Host "[WARNING] Could not set directory permissions: $_"
 }
 
 Write-Host "[INFO] Creating configuration file..."
@@ -84,12 +118,30 @@ addnode=tetsuoarena.com:8338
 # threads=4
 "@
 
-Set-Content -Path "$dataDir\tetsuo.conf" -Value $confContent
+try {
+    Set-Content -Path "$dataDir\tetsuo.conf" -Value $confContent -ErrorAction Stop
+} catch {
+    Write-Host "[ERROR] Failed to create configuration file: $_"
+    exit 1
+}
 
 Write-Host ""
-Write-Host "════════════════════════════════════════════════════════════════════════════════"
+Write-Host "========================================================================"
+Write-Host "                        SECURITY NOTICE"
+Write-Host "========================================================================"
+Write-Host ""
+Write-Host "Your TETSUO node will listen on port 8338 (P2P network traffic)"
+Write-Host ""
+Write-Host "IMPORTANT SECURITY RECOMMENDATIONS:"
+Write-Host "  1. Ensure your firewall allows outbound connections"
+Write-Host "  2. Do NOT expose RPC port 8336 to the internet"
+Write-Host "  3. Keep rpcallowip=127.0.0.1 (localhost only)"
+Write-Host "  4. Never share your data directory with untrusted users"
+Write-Host "  5. Keep your system and dependencies updated"
+Write-Host ""
+Write-Host "========================================================================"
 Write-Host "                     INSTALLATION COMPLETED"
-Write-Host "════════════════════════════════════════════════════════════════════════════════"
+Write-Host "========================================================================"
 Write-Host ""
 Write-Host "Node location: $workDir\tetsuo-core\build\Release"
 Write-Host "Config file: $dataDir\tetsuo.conf"
@@ -115,13 +167,13 @@ Write-Host "MONITOR YOUR NODE:"
 Write-Host ""
 Write-Host "  https://tetsuoarena.com"
 Write-Host ""
-Write-Host "RUN AS WINDOWS SERVICE (optional):"
+Write-Host "RUN AS WINDOWS SERVICE (optional - requires Administrator):"
 Write-Host ""
 Write-Host "  nssm install TETSUOD $workDir\tetsuo-core\build\Release\tetsuod.exe"
 Write-Host "  nssm set TETSUOD AppParameters ""-datadir=$dataDir"""
 Write-Host "  nssm start TETSUOD"
 Write-Host ""
-Write-Host "════════════════════════════════════════════════════════════════════════════════"
+Write-Host "========================================================================"
 Write-Host ""
 
 $response = Read-Host "Would you like to open the node folder now? (y/n)"

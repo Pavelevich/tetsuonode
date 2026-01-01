@@ -1,21 +1,48 @@
 #!/bin/bash
 
 # TETSUO Node Installer for Linux
-# Run with: curl -fsSL https://raw.githubusercontent.com/Pavelevich/tetsuonode/main/scripts/install-linux.sh | bash
+# Safe installation guide: See INSTALL.md for secure setup
 
 set -e
+set -u
 
-echo "════════════════════════════════════════════════════════════════════════════════"
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
+# Cleanup on error
+cleanup() {
+    if [ $? -ne 0 ]; then
+        echo -e "${RED}[ERROR] Installation failed${NC}"
+        echo "Partial installation may remain in: $WORK_DIR"
+        echo "You can safely remove it with: rm -rf $WORK_DIR"
+    fi
+}
+trap cleanup EXIT
+
+echo "=========================================================================="
 echo "                    TETSUO NODE - LINUX INSTALLER"
-echo "════════════════════════════════════════════════════════════════════════════════"
+echo "=========================================================================="
 echo ""
 
-# Detect Linux distribution
+# Validate HOME environment
+if [ -z "${HOME:-}" ] || [ "$HOME" = "/" ]; then
+    echo -e "${RED}[ERROR] Invalid HOME directory${NC}"
+    echo "HOME is not set correctly. Please check your environment."
+    exit 1
+fi
+
+# Detect Linux distribution safely (without sourcing untrusted files)
+echo "[INFO] Detecting Linux distribution..."
 if [ -f /etc/os-release ]; then
-    . /etc/os-release
-    OS=$ID
+    # Extract values without sourcing the file (safer)
+    OS=$(grep "^ID=" /etc/os-release | cut -d'=' -f2 | tr -d '"')
+    PRETTY_NAME=$(grep "^PRETTY_NAME=" /etc/os-release | cut -d'=' -f2 | tr -d '"')
 else
-    echo "[ERROR] Unable to detect Linux distribution"
+    echo -e "${RED}[ERROR] Unable to detect Linux distribution${NC}"
+    echo "Could not find /etc/os-release"
     exit 1
 fi
 
@@ -25,9 +52,9 @@ echo ""
 # Install dependencies based on distribution
 case "$OS" in
     ubuntu|debian)
-        echo "[INFO] Installing dependencies..."
+        echo "[INFO] Installing dependencies for Debian/Ubuntu..."
         sudo apt-get update
-        sudo apt-get install -y \
+        if ! sudo apt-get install -y \
             build-essential \
             libssl-dev \
             libboost-all-dev \
@@ -35,11 +62,14 @@ case "$OS" in
             git \
             automake \
             libtool \
-            pkg-config
+            pkg-config; then
+            echo -e "${RED}[ERROR] Failed to install dependencies${NC}"
+            exit 1
+        fi
         ;;
     fedora|rhel|centos)
-        echo "[INFO] Installing dependencies..."
-        sudo dnf install -y \
+        echo "[INFO] Installing dependencies for Fedora/RHEL/CentOS..."
+        if ! sudo dnf install -y \
             gcc \
             gcc-c++ \
             make \
@@ -49,19 +79,25 @@ case "$OS" in
             git \
             automake \
             libtool \
-            pkgconfig
+            pkgconfig; then
+            echo -e "${RED}[ERROR] Failed to install dependencies${NC}"
+            exit 1
+        fi
         ;;
     arch)
-        echo "[INFO] Installing dependencies..."
-        sudo pacman -Sy --noconfirm \
+        echo "[INFO] Installing dependencies for Arch Linux..."
+        if ! sudo pacman -Sy --noconfirm \
             base-devel \
             openssl \
             boost \
             libevent \
-            git
+            git; then
+            echo -e "${RED}[ERROR] Failed to install dependencies${NC}"
+            exit 1
+        fi
         ;;
     *)
-        echo "[ERROR] Unsupported Linux distribution: $OS"
+        echo -e "${RED}[ERROR] Unsupported Linux distribution: $OS${NC}"
         echo "Please install dependencies manually:"
         echo "  - build-essential (or gcc, make)"
         echo "  - libssl-dev"
@@ -72,21 +108,88 @@ case "$OS" in
         ;;
 esac
 
+# Verify critical dependencies
+echo "[INFO] Verifying dependencies..."
+for cmd in git automake libtool; do
+    if ! command -v $cmd &> /dev/null; then
+        echo -e "${RED}[ERROR] Dependency '$cmd' not found after installation${NC}"
+        exit 1
+    fi
+done
+
 echo ""
 echo "[INFO] Cloning TETSUO Core..."
 WORK_DIR="$HOME/tetsuonode"
+
+# Validate WORK_DIR path is safe
+if [[ ! "$WORK_DIR" =~ ^$HOME ]]; then
+    echo -e "${RED}[ERROR] Invalid work directory${NC}"
+    exit 1
+fi
+
+# Warn if directory exists
+if [ -d "$WORK_DIR" ]; then
+    echo -e "${YELLOW}[WARNING] $WORK_DIR already exists and will be removed${NC}"
+    read -p "Continue? (y/n): " -n 1 -r
+    echo
+    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+        exit 1
+    fi
+fi
+
 rm -rf "$WORK_DIR"
-git clone https://github.com/Pavelevich/tetsuonode.git "$WORK_DIR"
-cd "$WORK_DIR/tetsuo-core"
+
+# Clone repository
+if ! git clone https://github.com/Pavelevich/tetsuonode.git "$WORK_DIR"; then
+    echo -e "${RED}[ERROR] Failed to clone repository${NC}"
+    exit 1
+fi
+
+cd "$WORK_DIR/tetsuo-core" || {
+    echo -e "${RED}[ERROR] Failed to enter tetsuo-core directory${NC}"
+    exit 1
+}
 
 echo "[INFO] Building TETSUO Core..."
-./autogen.sh
-./configure --disable-wallet
-make -j$(nproc)
+# Build with error checking
+if ! ./autogen.sh; then
+    echo -e "${RED}[ERROR] autogen.sh failed${NC}"
+    exit 1
+fi
 
-echo ""
+if ! ./configure --disable-wallet; then
+    echo -e "${RED}[ERROR] configure failed${NC}"
+    exit 1
+fi
+
+# Increase file descriptors for build
+ulimit -n 4096 2>/dev/null || true
+
+if ! make -j$(nproc); then
+    echo -e "${RED}[ERROR] make failed${NC}"
+    exit 1
+fi
+
+# Verify build artifacts
+echo "[INFO] Verifying build artifacts..."
+if [ ! -f "./build/bin/tetsuod" ]; then
+    echo -e "${RED}[ERROR] tetsuod binary not found${NC}"
+    exit 1
+fi
+
+if [ ! -f "./build/bin/tetsuo-cli" ]; then
+    echo -e "${RED}[ERROR] tetsuo-cli binary not found${NC}"
+    exit 1
+fi
+
+if [ ! -x "./build/bin/tetsuod" ]; then
+    echo -e "${RED}[ERROR] tetsuod is not executable${NC}"
+    exit 1
+fi
+
 echo "[INFO] Configuring node..."
 mkdir -p ~/.tetsuo
+chmod 700 ~/.tetsuo
 
 cat > ~/.tetsuo/tetsuo.conf << 'EOF'
 # TETSUO Node Configuration
@@ -113,10 +216,26 @@ addnode=tetsuoarena.com:8338
 # threads=4
 EOF
 
+# Secure config file permissions
+chmod 600 ~/.tetsuo/tetsuo.conf
+
 echo ""
-echo "════════════════════════════════════════════════════════════════════════════════"
+echo "=========================================================================="
+echo "                        SECURITY NOTICE"
+echo "=========================================================================="
+echo ""
+echo "Your TETSUO node will listen on port 8338 (P2P network traffic)"
+echo ""
+echo "IMPORTANT SECURITY RECOMMENDATIONS:"
+echo "  1. Ensure your firewall allows outbound connections"
+echo "  2. Do NOT expose RPC port 8336 to the internet"
+echo "  3. Keep rpcallowip=127.0.0.1 (localhost only)"
+echo "  4. Never share your data directory with untrusted users"
+echo "  5. Keep your system and dependencies updated"
+echo ""
+echo "=========================================================================="
 echo "                     INSTALLATION COMPLETED"
-echo "════════════════════════════════════════════════════════════════════════════════"
+echo "=========================================================================="
 echo ""
 echo "Node location: $WORK_DIR/tetsuo-core/build/bin/tetsuod"
 echo "Config file: ~/.tetsuo/tetsuo.conf"
@@ -142,35 +261,24 @@ echo "MONITOR YOUR NODE:"
 echo ""
 echo "  https://tetsuoarena.com"
 echo ""
-echo "RUN AS SYSTEMD SERVICE (optional):"
-echo ""
-echo "  sudo tee /etc/systemd/system/tetsuod.service > /dev/null << 'UNIT'"
-echo "  [Unit]"
-echo "  Description=TETSUO Node"
-echo "  After=network.target"
-echo "  [Service]"
-echo "  Type=simple"
-echo "  User=$USER"
-echo "  ExecStart=$WORK_DIR/tetsuo-core/build/bin/tetsuod -daemon -datadir=$HOME/.tetsuo"
-echo "  Restart=always"
-echo "  RestartSec=10"
-echo "  [Install]"
-echo "  WantedBy=multi-user.target"
-echo "  UNIT"
-echo ""
-echo "  sudo systemctl daemon-reload"
-echo "  sudo systemctl enable tetsuod"
-echo "  sudo systemctl start tetsuod"
-echo ""
-echo "════════════════════════════════════════════════════════════════════════════════"
+echo "=========================================================================="
 echo ""
 read -p "Would you like to start the node now? (y/n): " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
-    cd "$WORK_DIR/tetsuo-core"
+    cd "$WORK_DIR/tetsuo-core" || {
+        echo -e "${RED}[ERROR] Failed to change directory${NC}"
+        exit 1
+    }
+
+    if [ ! -f "./build/bin/tetsuod" ]; then
+        echo -e "${RED}[ERROR] tetsuod binary not found${NC}"
+        exit 1
+    fi
+
     ./build/bin/tetsuod -daemon -datadir=$HOME/.tetsuo
     sleep 2
-    echo "[SUCCESS] Node started!"
+    echo -e "${GREEN}[SUCCESS] Node started!${NC}"
     echo ""
     ./build/bin/tetsuo-cli -datadir=$HOME/.tetsuo getblockcount
     echo ""
