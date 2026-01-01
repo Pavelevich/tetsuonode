@@ -618,7 +618,7 @@ node2.tetsuo.network:8338
 
 - **Block Explorer**: https://tetsuoarena.com
 - **GitHub**: https://github.com/Pavelevich/tetsuonode
-- **Discord**: https://discord.gg/tetsuo
+- **Twitter**: https://twitter.com/tetsuoarena
 - **Documentation**: https://docs.tetsuoarena.com
 - **API Reference**: https://api.tetsuoarena.com/docs
 
@@ -646,8 +646,7 @@ This project is licensed under the **MIT License** - see [LICENSE](LICENSE) file
 
 - **Issues**: https://github.com/Pavelevich/tetsuonode/issues
 - **Discussions**: https://github.com/Pavelevich/tetsuonode/discussions
-- **Discord**: https://discord.gg/tetsuo
-- **Twitter**: @TetsuoNetwork
+- **Twitter**: @tetsuoarena
 - **Email**: support@tetsuoarena.com
 
 ---

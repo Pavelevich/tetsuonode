@@ -475,7 +475,7 @@ Pool mining is not yet supported. You're mining solo, which means:
 - **Block Explorer:** https://tetsuoarena.com
 - **RPC Commands:** `./build/bin/tetsuo-cli -datadir=$HOME/.tetsuo help`
 - **Full Node Guide:** See README.md
-- **Community:** https://discord.gg/tetsuo
+- **Twitter:** @tetsuoarena
 
 ---
 
