@@ -6,11 +6,11 @@
    ██║   ███████╗   ██║   ███████║╚██████╔╝╚██████╔╝██║ ╚████║╚██████╔╝██████╔╝███████╗
    ╚═╝   ╚══════╝   ╚═╝   ╚══════╝ ╚═════╝  ╚═════╝ ╚═╝  ╚═══╝ ╚═════╝ ╚═════╝ ╚══════╝
 
-                          ⚡ DISTRIBUTED BLOCKCHAIN NODE ⚡
+                          DISTRIBUTED BLOCKCHAIN NODE
                             Join the decentralized network
 ```
 
-# 🚀 TETSUONODE - Run Your Own Node
+# TETSUONODE - Run Your Own Node
 
 > **The singularity begins with a single block** — Execute your node and become part of the TETSUO ecosystem
 
@@ -21,7 +21,7 @@
 
 ---
 
-## 📋 Table of Contents
+## Table of Contents
 
 - [Overview](#overview)
 - [System Requirements](#system-requirements)
@@ -38,32 +38,32 @@
 
 ---
 
-## 🌐 Overview
+## Overview
 
 **TETSUONODE** is your gateway to running a full node on the **TETSUO blockchain network**.
 
 ### What is a Node?
 
 A TETSUO node is a peer in the decentralized network that:
-- ✅ Downloads and validates the entire blockchain
-- ✅ Relays transactions across the network
-- ✅ Maintains network security and integrity
-- ✅ (Optional) Mines new TETSUO blocks
-- ✅ Strengthens network decentralization
+- Downloads and validates the entire blockchain
+- Relays transactions across the network
+- Maintains network security and integrity
+- (Optional) Mines new TETSUO blocks
+- Strengthens network decentralization
 
 ### Why Run a Node?
 
 | Benefit | Description |
 |---------|-------------|
-| 🛡️ **Security** | Help validate transactions and secure the network |
-| 💰 **Mining** | Earn TETSUO by mining blocks (optional) |
-| 🌍 **Decentralization** | Make the network more resilient |
-| 📊 **Control** | Full access to blockchain data |
-| 🚀 **Community** | Join the TETSUO ecosystem |
+| **Security** | Help validate transactions and secure the network |
+| **Mining** | Earn TETSUO by mining blocks (optional) |
+| **Decentralization** | Make the network more resilient |
+| **Control** | Full access to blockchain data |
+| **Community** | Join the TETSUO ecosystem |
 
 ---
 
-## 💻 System Requirements
+## System Requirements
 
 ### Minimum Requirements
 
@@ -89,9 +89,9 @@ Uptime:     Always online
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
-### ⚡ One-Command Installation
+### One-Command Installation
 
 #### macOS
 
@@ -113,7 +113,7 @@ irm https://raw.githubusercontent.com/Pavelevich/tetsuonode/main/scripts/install
 
 ---
 
-## 🍎 macOS Installation
+## macOS Installation
 
 ### Step 1: Install Homebrew (if not already installed)
 
@@ -173,11 +173,11 @@ EOF
 ./build/bin/tetsuo-cli -datadir=$HOME/.tetsuo getblockchaininfo
 ```
 
-**✅ Node is running!**
+**Node is running!**
 
 ---
 
-## 🐧 Linux Installation
+## Linux Installation
 
 ### Ubuntu/Debian
 
@@ -242,11 +242,11 @@ EOF
 ./build/bin/tetsuo-cli -datadir=$HOME/.tetsuo getblockcount
 ```
 
-**✅ Node is running!**
+**Node is running!**
 
 ---
 
-## 🪟 Windows Installation
+## Windows Installation
 
 ### Prerequisites
 
@@ -325,11 +325,11 @@ Start-Process -WindowStyle Hidden -FilePath ".\tetsuod.exe" -ArgumentList "-data
 .\tetsuo-cli.exe -datadir="$env:APPDATA\Tetsuo\.tetsuo" getblockcount
 ```
 
-**✅ Node is running!**
+**Node is running!**
 
 ---
 
-## ⚙️ Advanced Configuration
+## Advanced Configuration
 
 ### Enable Mining
 
@@ -421,7 +421,7 @@ sudo systemctl start tetsuod
 
 ---
 
-## 📊 Monitoring Your Node
+## Monitoring Your Node
 
 ### Check Blockchain Height
 
@@ -455,11 +455,11 @@ tail -f ~/.tetsuo/debug.log
 
 ### Dashboard (Web)
 
-Visit: **https://tetsuoarena.com**
+Visit: https://tetsuoarena.com
 
 ---
 
-## ⛏️ Mining TETSUO
+## Mining TETSUO
 
 ### Start Mining
 
@@ -483,7 +483,7 @@ watch -n 5 './build/bin/tetsuo-cli -datadir=$HOME/.tetsuo getmininginfo'
 
 ---
 
-## 🆘 Troubleshooting
+## Troubleshooting
 
 ### Problem: "Could not locate RPC credentials"
 
@@ -540,7 +540,7 @@ maxconnections=64
 
 ---
 
-## 📁 Directory Structure
+## Directory Structure
 
 ```
 tetsuonode/
@@ -563,7 +563,7 @@ tetsuonode/
 
 ---
 
-## 🔗 Useful Commands Reference
+## Useful Commands Reference
 
 ```bash
 # Node Management
@@ -592,7 +592,7 @@ tetsuo-cli -datadir=$HOME/.tetsuo help [command]
 
 ---
 
-## 🌐 Network Information
+## Network Information
 
 ### Mainnet
 
@@ -614,7 +614,7 @@ node2.tetsuo.network:8338
 
 ---
 
-## 📚 Resources
+## Resources
 
 - **Block Explorer**: https://tetsuoarena.com
 - **GitHub**: https://github.com/Pavelevich/tetsuonode
@@ -624,7 +624,7 @@ node2.tetsuo.network:8338
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 We welcome contributions! Please:
 
@@ -636,13 +636,13 @@ We welcome contributions! Please:
 
 ---
 
-## 📄 License
+## License
 
 This project is licensed under the **MIT License** - see [LICENSE](LICENSE) file for details.
 
 ---
 
-## ⚡ Support & Community
+## Support & Community
 
 - **Issues**: https://github.com/Pavelevich/tetsuonode/issues
 - **Discussions**: https://github.com/Pavelevich/tetsuonode/discussions
@@ -652,7 +652,7 @@ This project is licensed under the **MIT License** - see [LICENSE](LICENSE) file
 
 ---
 
-## 🎯 Roadmap
+## Roadmap
 
 - [ ] GUI Node Manager
 - [ ] Mobile Node Monitor
@@ -664,7 +664,7 @@ This project is licensed under the **MIT License** - see [LICENSE](LICENSE) file
 
 ---
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - TETSUO Core Development Team
 - Community Node Operators
@@ -682,5 +682,5 @@ This project is licensed under the **MIT License** - see [LICENSE](LICENSE) file
 ████████████████████████████████████████████████████████████████████████████████
 ```
 
-**Made with ⚡ for TETSUO Network**
+**Made for TETSUO Network**
 *Last Updated: January 2026*

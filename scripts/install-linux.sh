@@ -6,7 +6,7 @@
 set -e
 
 echo "════════════════════════════════════════════════════════════════════════════════"
-echo "                    🚀 TETSUO NODE - LINUX INSTALLER"
+echo "                    TETSUO NODE - LINUX INSTALLER"
 echo "════════════════════════════════════════════════════════════════════════════════"
 echo ""
 
@@ -15,17 +15,17 @@ if [ -f /etc/os-release ]; then
     . /etc/os-release
     OS=$ID
 else
-    echo "❌ Unable to detect Linux distribution"
+    echo "[ERROR] Unable to detect Linux distribution"
     exit 1
 fi
 
-echo "📦 Detected: $PRETTY_NAME"
+echo "[INFO] Detected: $PRETTY_NAME"
 echo ""
 
 # Install dependencies based on distribution
 case "$OS" in
     ubuntu|debian)
-        echo "📦 Installing dependencies..."
+        echo "[INFO] Installing dependencies..."
         sudo apt-get update
         sudo apt-get install -y \
             build-essential \
@@ -38,7 +38,7 @@ case "$OS" in
             pkg-config
         ;;
     fedora|rhel|centos)
-        echo "📦 Installing dependencies..."
+        echo "[INFO] Installing dependencies..."
         sudo dnf install -y \
             gcc \
             gcc-c++ \
@@ -52,7 +52,7 @@ case "$OS" in
             pkgconfig
         ;;
     arch)
-        echo "📦 Installing dependencies..."
+        echo "[INFO] Installing dependencies..."
         sudo pacman -Sy --noconfirm \
             base-devel \
             openssl \
@@ -61,7 +61,7 @@ case "$OS" in
             git
         ;;
     *)
-        echo "❌ Unsupported Linux distribution: $OS"
+        echo "[ERROR] Unsupported Linux distribution: $OS"
         echo "Please install dependencies manually:"
         echo "  - build-essential (or gcc, make)"
         echo "  - libssl-dev"
@@ -73,19 +73,19 @@ case "$OS" in
 esac
 
 echo ""
-echo "📥 Cloning TETSUO Core..."
+echo "[INFO] Cloning TETSUO Core..."
 WORK_DIR="$HOME/tetsuonode"
 rm -rf "$WORK_DIR"
 git clone https://github.com/Pavelevich/tetsuonode.git "$WORK_DIR"
 cd "$WORK_DIR/tetsuo-core"
 
-echo "🏗️  Building TETSUO Core..."
+echo "[INFO] Building TETSUO Core..."
 ./autogen.sh
 ./configure --disable-wallet
 make -j$(nproc)
 
 echo ""
-echo "⚙️  Configuring node..."
+echo "[INFO] Configuring node..."
 mkdir -p ~/.tetsuo
 
 cat > ~/.tetsuo/tetsuo.conf << 'EOF'
@@ -115,34 +115,34 @@ EOF
 
 echo ""
 echo "════════════════════════════════════════════════════════════════════════════════"
-echo "                     ✅ INSTALLATION COMPLETED"
+echo "                     INSTALLATION COMPLETED"
 echo "════════════════════════════════════════════════════════════════════════════════"
 echo ""
-echo "📍 Node location: $WORK_DIR/tetsuo-core/build/bin/tetsuod"
-echo "📍 Config file: ~/.tetsuo/tetsuo.conf"
+echo "Node location: $WORK_DIR/tetsuo-core/build/bin/tetsuod"
+echo "Config file: ~/.tetsuo/tetsuo.conf"
 echo ""
-echo "🚀 START YOUR NODE:"
+echo "START YOUR NODE:"
 echo ""
 echo "  cd $WORK_DIR/tetsuo-core"
 echo "  ./build/bin/tetsuod -daemon -datadir=$HOME/.tetsuo"
 echo ""
-echo "✅ VERIFY INSTALLATION:"
+echo "VERIFY INSTALLATION:"
 echo ""
 echo "  cd $WORK_DIR/tetsuo-core"
 echo "  ./build/bin/tetsuo-cli -datadir=$HOME/.tetsuo getblockcount"
 echo ""
-echo "⛏️  TO ENABLE MINING:"
+echo "TO ENABLE MINING:"
 echo ""
 echo "  1. Edit: ~/.tetsuo/tetsuo.conf"
 echo "  2. Set your address in mineraddress=..."
 echo "  3. Uncomment mine=1 and threads=4"
 echo "  4. Restart node"
 echo ""
-echo "📊 MONITOR YOUR NODE:"
+echo "MONITOR YOUR NODE:"
 echo ""
 echo "  https://tetsuoarena.com"
 echo ""
-echo "🐧 RUN AS SYSTEMD SERVICE (optional):"
+echo "RUN AS SYSTEMD SERVICE (optional):"
 echo ""
 echo "  sudo tee /etc/systemd/system/tetsuod.service > /dev/null << 'UNIT'"
 echo "  [Unit]"
@@ -170,7 +170,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     cd "$WORK_DIR/tetsuo-core"
     ./build/bin/tetsuod -daemon -datadir=$HOME/.tetsuo
     sleep 2
-    echo "✅ Node started!"
+    echo "[SUCCESS] Node started!"
     echo ""
     ./build/bin/tetsuo-cli -datadir=$HOME/.tetsuo getblockcount
     echo ""
