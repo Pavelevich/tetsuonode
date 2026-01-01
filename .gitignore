@@ -1,0 +1,42 @@
+# Build artifacts
+*.o
+*.a
+*.so
+*.dylib
+*.exe
+*.dll
+*.lib
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Dependencies
+/depends/built_*
+.cmake/
+
+# Test files
+/test_tetsuo
+/test_tetsuo_cli
+
+# Data directories
+.tetsuo/
+.bitcoin/
+*.dat
+*.log
+
+# CMake
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+
+# Misc
+*.pyc
+__pycache__/
+.env
+.env.local
