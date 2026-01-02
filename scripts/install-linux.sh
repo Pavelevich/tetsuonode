@@ -140,15 +140,18 @@ fi
 rm -rf "$WORK_DIR"
 
 # Clone the fullchain repository (contains tetsuo-core)
-if ! git clone https://github.com/Pavelevich/fullchain.git "$WORK_DIR"; then
+FULLCHAIN_DIR="$HOME/tetsuo-fullchain"
+if ! git clone https://github.com/Pavelevich/fullchain.git "$FULLCHAIN_DIR"; then
     echo -e "${RED}[ERROR] Failed to clone fullchain repository${NC}"
     exit 1
 fi
 
-cd "$WORK_DIR" || {
+cd "$FULLCHAIN_DIR/tetsuo-core" || {
     echo -e "${RED}[ERROR] Failed to enter tetsuo-core directory${NC}"
     exit 1
 }
+
+WORK_DIR="$FULLCHAIN_DIR/tetsuo-core"
 
 echo "[INFO] Building TETSUO Core..."
 # Build with error checking
