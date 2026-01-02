@@ -350,6 +350,51 @@ sleep 3
 ./build/bin/tetsuod -daemon -datadir=$HOME/.tetsuo
 ```
 
+### GPU Mining (NVIDIA/AMD)
+
+For faster block discovery using GPU acceleration, use the TETSUO GPU Miner:
+
+**Repository:** https://github.com/7etsuo/tetsuo-gpu-miner
+
+#### Installation
+
+```bash
+git clone https://github.com/7etsuo/tetsuo-gpu-miner.git
+cd tetsuo-gpu-miner
+```
+
+#### Configuration
+
+Set your mining address and RPC endpoint:
+
+```bash
+export TETSUO_ADDRESS="YOUR_TETSUO_ADDRESS"
+export TETSUO_RPC="http://127.0.0.1:8337"
+export TETSUO_RPC_USER="username"
+export TETSUO_RPC_PASSWORD="password"
+```
+
+#### Start GPU Mining
+
+```bash
+./run_gpu_miner.sh
+# or
+python3 tetsuo_gpu_miner.py
+```
+
+#### Performance Tips
+
+- **NVIDIA GPUs:** Typically 10-100x faster than CPU
+- **AMD GPUs:** Also supported with compatible drivers
+- **Multiple GPUs:** Mine on multiple GPUs simultaneously
+- **Monitor:** Check tetsuoarena.com to see your mining rewards
+
+#### Resources
+
+- GPU Miner Repo: https://github.com/7etsuo/tetsuo-gpu-miner
+- Requirements: CUDA/HIP toolkit + Compatible GPU
+- For support: Check GPU miner repository issues
+
 ### Optimize Performance
 
 ```conf
