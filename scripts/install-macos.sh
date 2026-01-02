@@ -51,7 +51,7 @@ if ! command -v brew &> /dev/null; then
 fi
 
 echo "[INFO] Installing dependencies..."
-REQUIRED_PACKAGES="git cmake automake libtool boost openssl libevent"
+REQUIRED_PACKAGES="git cmake automake libtool boost openssl libevent capnp"
 brew install $REQUIRED_PACKAGES
 
 # Verify dependencies were installed

@@ -63,7 +63,9 @@ case "$OS" in
             git \
             automake \
             libtool \
-            pkg-config; then
+            pkg-config \
+            capnproto \
+            libcapnp-dev; then
             echo -e "${RED}[ERROR] Failed to install dependencies${NC}"
             exit 1
         fi
@@ -81,7 +83,8 @@ case "$OS" in
             git \
             automake \
             libtool \
-            pkgconfig; then
+            pkgconfig \
+            capnproto-devel; then
             echo -e "${RED}[ERROR] Failed to install dependencies${NC}"
             exit 1
         fi
