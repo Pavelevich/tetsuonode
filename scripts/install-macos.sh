@@ -65,7 +65,7 @@ done
 
 echo ""
 echo "[INFO] Cloning TETSUO Core..."
-WORK_DIR="$HOME/tetsuonode"
+WORK_DIR="$HOME/tetsuo-core"
 
 # Validate WORK_DIR path is safe
 if [[ ! "$WORK_DIR" =~ ^$HOME ]]; then
@@ -85,13 +85,13 @@ fi
 
 rm -rf "$WORK_DIR"
 
-# Clone repository
-if ! git clone https://github.com/Pavelevich/tetsuonode.git "$WORK_DIR"; then
-    echo -e "${RED}[ERROR] Failed to clone repository${NC}"
+# Clone the fullchain repository (contains tetsuo-core)
+if ! git clone https://github.com/Pavelevich/fullchain.git "$WORK_DIR"; then
+    echo -e "${RED}[ERROR] Failed to clone fullchain repository${NC}"
     exit 1
 fi
 
-cd "$WORK_DIR/tetsuo-core" || {
+cd "$WORK_DIR" || {
     echo -e "${RED}[ERROR] Failed to enter tetsuo-core directory${NC}"
     exit 1
 }
@@ -180,17 +180,17 @@ echo "==========================================================================
 echo "                     INSTALLATION COMPLETED"
 echo "=========================================================================="
 echo ""
-echo "Node location: $WORK_DIR/tetsuo-core/build/bin/tetsuod"
+echo "Node location: $WORK_DIR/build/bin/tetsuod"
 echo "Config file: ~/.tetsuo/tetsuo.conf"
 echo ""
 echo "START YOUR NODE:"
 echo ""
-echo "  cd $WORK_DIR/tetsuo-core"
+echo "  cd $WORK_DIR"
 echo "  ./build/bin/tetsuod -daemon -datadir=$HOME/.tetsuo"
 echo ""
 echo "VERIFY INSTALLATION:"
 echo ""
-echo "  cd $WORK_DIR/tetsuo-core"
+echo "  cd $WORK_DIR"
 echo "  ./build/bin/tetsuo-cli -datadir=$HOME/.tetsuo getblockcount"
 echo ""
 echo "TO ENABLE MINING:"
@@ -209,7 +209,7 @@ echo ""
 read -p "Would you like to start the node now? (y/n): " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
-    cd "$WORK_DIR/tetsuo-core" || {
+    cd "$WORK_DIR" || {
         echo -e "${RED}[ERROR] Failed to change directory${NC}"
         exit 1
     }
@@ -226,6 +226,6 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     ./build/bin/tetsuo-cli -datadir=$HOME/.tetsuo getblockcount
     echo ""
     echo "Node is syncing... Check progress with:"
-    echo "  cd $WORK_DIR/tetsuo-core"
+    echo "  cd $WORK_DIR"
     echo "  ./build/bin/tetsuo-cli -datadir=$HOME/.tetsuo getblockcount"
 fi
