@@ -56,6 +56,7 @@ case "$OS" in
         sudo apt-get update
         if ! sudo apt-get install -y \
             build-essential \
+            cmake \
             libssl-dev \
             libboost-all-dev \
             libevent-dev \
@@ -73,6 +74,7 @@ case "$OS" in
             gcc \
             gcc-c++ \
             make \
+            cmake \
             openssl-devel \
             boost-devel \
             libevent-devel \
@@ -153,25 +155,32 @@ cd "$FULLCHAIN_DIR/tetsuo-core" || {
 
 WORK_DIR="$FULLCHAIN_DIR/tetsuo-core"
 
-echo "[INFO] Building TETSUO Core..."
-# Build with error checking
-if ! ./autogen.sh; then
-    echo -e "${RED}[ERROR] autogen.sh failed${NC}"
+echo "[INFO] Building TETSUO Core with CMake..."
+
+# Create build directory
+if ! mkdir -p build; then
+    echo -e "${RED}[ERROR] Failed to create build directory${NC}"
     exit 1
 fi
 
-if ! ./configure --disable-wallet; then
-    echo -e "${RED}[ERROR] configure failed${NC}"
+cd build
+
+# Configure with CMake
+if ! cmake .. -DCMAKE_BUILD_TYPE=Release; then
+    echo -e "${RED}[ERROR] CMake configuration failed${NC}"
     exit 1
 fi
 
 # Increase file descriptors for build
 ulimit -n 4096 2>/dev/null || true
 
+# Build with make
 if ! make -j$(nproc); then
-    echo -e "${RED}[ERROR] make failed${NC}"
+    echo -e "${RED}[ERROR] Build failed${NC}"
     exit 1
 fi
+
+cd ..
 
 # Verify build artifacts
 echo "[INFO] Verifying build artifacts..."

@@ -51,7 +51,7 @@ if ! command -v brew &> /dev/null; then
 fi
 
 echo "[INFO] Installing dependencies..."
-REQUIRED_PACKAGES="git automake libtool boost openssl libevent"
+REQUIRED_PACKAGES="git cmake automake libtool boost openssl libevent"
 brew install $REQUIRED_PACKAGES
 
 # Verify dependencies were installed
@@ -99,22 +99,29 @@ cd "$FULLCHAIN_DIR/tetsuo-core" || {
 
 WORK_DIR="$FULLCHAIN_DIR/tetsuo-core"
 
-echo "[INFO] Building TETSUO Core..."
-# Build with error checking
-if ! ./autogen.sh; then
-    echo -e "${RED}[ERROR] autogen.sh failed${NC}"
+echo "[INFO] Building TETSUO Core with CMake..."
+
+# Create build directory
+if ! mkdir -p build; then
+    echo -e "${RED}[ERROR] Failed to create build directory${NC}"
     exit 1
 fi
 
-if ! ./configure --disable-wallet; then
-    echo -e "${RED}[ERROR] configure failed${NC}"
+cd build
+
+# Configure with CMake
+if ! cmake .. -DCMAKE_BUILD_TYPE=Release; then
+    echo -e "${RED}[ERROR] CMake configuration failed${NC}"
     exit 1
 fi
 
+# Build with make
 if ! make -j$(sysctl -n hw.ncpu); then
-    echo -e "${RED}[ERROR] make failed${NC}"
+    echo -e "${RED}[ERROR] Build failed${NC}"
     exit 1
 fi
+
+cd ..
 
 # Verify build artifacts
 echo "[INFO] Verifying build artifacts..."
