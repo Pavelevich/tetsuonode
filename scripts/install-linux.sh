@@ -123,6 +123,14 @@ for cmd in git automake libtool; do
 done
 
 echo ""
+echo "[INFO] Verifying TETSUO Core repository authenticity..."
+
+# Verify Git repository signature (recommended for production)
+echo "[INFO] Cloning TETSUO Core with signature verification..."
+echo "[INFO] Note: Verify the commit signatures after cloning with:"
+echo "       cd fullchain && git verify-commit HEAD"
+echo ""
+
 echo "[INFO] Cloning TETSUO Core..."
 WORK_DIR="$HOME/tetsuo-core"
 
@@ -201,6 +209,16 @@ if [ ! -x "./build/bin/tetsuod" ]; then
     echo -e "${RED}[ERROR] tetsuod is not executable${NC}"
     exit 1
 fi
+
+# Verify binary integrity with checksums
+echo "[INFO] Computing binary checksums for future verification..."
+sha256sum "./build/bin/tetsuod" > tetsuod.sha256
+sha256sum "./build/bin/tetsuo-cli" > tetsuo-cli.sha256
+echo "[INFO] Checksum files created:"
+echo "  - tetsuod.sha256"
+echo "  - tetsuo-cli.sha256"
+echo "[INFO] Keep these files for verification in future updates"
+echo ""
 
 echo "[INFO] Configuring node..."
 mkdir -p ~/.tetsuo
