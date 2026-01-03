@@ -140,6 +140,16 @@ if [ ! -x "./build/bin/tetsuod" ]; then
     exit 1
 fi
 
+# Verify binary integrity with checksums
+echo "[INFO] Computing binary checksums for future verification..."
+shasum -a 256 "./build/bin/tetsuod" > tetsuod.sha256
+shasum -a 256 "./build/bin/tetsuo-cli" > tetsuo-cli.sha256
+echo "[INFO] Checksum files created:"
+echo "  - tetsuod.sha256"
+echo "  - tetsuo-cli.sha256"
+echo "[INFO] Keep these files for verification in future updates"
+echo ""
+
 echo "[INFO] Configuring node..."
 mkdir -p ~/.tetsuo
 chmod 700 ~/.tetsuo

@@ -125,7 +125,22 @@ try {
     exit 1
 }
 
+# Compute binary checksums for integrity verification
+Write-Host "[INFO] Computing binary checksums for future verification..."
+$buildDir = "$workDir\tetsuo-core\build\Release"
+if (Test-Path "$buildDir\tetsuod.exe") {
+    $tetsuodHash = (Get-FileHash "$buildDir\tetsuod.exe" -Algorithm SHA256).Hash
+    "$tetsuodHash  tetsuod.exe" | Out-File -FilePath "$buildDir\tetsuod.sha256" -Encoding ASCII
+    Write-Host "[OK] tetsuod.exe checksum: $tetsuodHash"
+}
+if (Test-Path "$buildDir\tetsuo-cli.exe") {
+    $cliHash = (Get-FileHash "$buildDir\tetsuo-cli.exe" -Algorithm SHA256).Hash
+    "$cliHash  tetsuo-cli.exe" | Out-File -FilePath "$buildDir\tetsuo-cli.sha256" -Encoding ASCII
+    Write-Host "[OK] tetsuo-cli.exe checksum: $cliHash"
+}
+Write-Host "[INFO] Checksum files created for future verification"
 Write-Host ""
+
 Write-Host "========================================================================"
 Write-Host "                        SECURITY NOTICE"
 Write-Host "========================================================================"

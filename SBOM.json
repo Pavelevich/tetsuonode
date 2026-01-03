@@ -1,0 +1,203 @@
+{
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.4",
+  "serialNumber": "urn:uuid:tetsuonode-sbom-2026-01",
+  "version": 1,
+  "metadata": {
+    "timestamp": "2026-01-03T16:30:00Z",
+    "tools": [
+      {
+        "vendor": "Tetsuo",
+        "name": "SBOM Generator",
+        "version": "1.0"
+      }
+    ],
+    "component": {
+      "bom-ref": "pkg:github/Pavelevich/tetsuonode@1.0",
+      "type": "application",
+      "name": "TETSUONODE",
+      "version": "1.0",
+      "description": "TETSUO Blockchain Node - Installation and deployment system",
+      "homepage": "https://github.com/Pavelevich/tetsuonode",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "supplier": {
+        "name": "TETSUO Project"
+      },
+      "manufacturer": {
+        "name": "TETSUO Project"
+      }
+    }
+  },
+  "components": [
+    {
+      "bom-ref": "pkg:cmake/cmake@3.22.0+",
+      "type": "library",
+      "name": "CMake",
+      "version": "3.22.0",
+      "description": "Build configuration and compilation system",
+      "licenses": [
+        {
+          "license": {
+            "name": "BSD-3-Clause"
+          }
+        }
+      ],
+      "scope": "required",
+      "purl": "pkg:cmake/cmake@3.22.0",
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://cmake.org"
+        }
+      ]
+    },
+    {
+      "bom-ref": "pkg:deb/libboost-all-dev@1.70.0+",
+      "type": "library",
+      "name": "Boost C++ Libraries",
+      "version": "1.70.0",
+      "description": "C++ utility and support libraries",
+      "licenses": [
+        {
+          "license": {
+            "name": "BSL-1.0"
+          }
+        }
+      ],
+      "scope": "required",
+      "purl": "pkg:deb/libboost-all-dev@1.70.0",
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://www.boost.org"
+        },
+        {
+          "type": "vulnerability-disclosure",
+          "url": "https://nvd.nist.gov/products/cpe/detail/cpe:2.3:a:boost:boost:1.70.0"
+        }
+      ]
+    },
+    {
+      "bom-ref": "pkg:deb/libssl-dev@1.1.1+",
+      "type": "library",
+      "name": "OpenSSL Development Libraries",
+      "version": "1.1.1",
+      "description": "Cryptographic library and TLS/SSL implementation",
+      "licenses": [
+        {
+          "license": {
+            "name": "Apache-2.0"
+          }
+        }
+      ],
+      "scope": "required",
+      "purl": "pkg:deb/libssl-dev@1.1.1",
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://www.openssl.org"
+        },
+        {
+          "type": "vulnerability-disclosure",
+          "url": "https://nvd.nist.gov/products/cpe/detail/cpe:2.3:a:openssl:openssl:1.1.1"
+        }
+      ]
+    },
+    {
+      "bom-ref": "pkg:deb/libevent-dev@2.1.8+",
+      "type": "library",
+      "name": "libevent",
+      "version": "2.1.8",
+      "description": "Asynchronous event notification library",
+      "licenses": [
+        {
+          "license": {
+            "name": "BSD-3-Clause"
+          }
+        }
+      ],
+      "scope": "required",
+      "purl": "pkg:deb/libevent-dev@2.1.8",
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://libevent.org"
+        },
+        {
+          "type": "vulnerability-disclosure",
+          "url": "https://nvd.nist.gov/products/cpe/detail/cpe:2.3:a:libevent:libevent:2.1.8"
+        }
+      ]
+    },
+    {
+      "bom-ref": "pkg:deb/capnproto@0.9.0+",
+      "type": "library",
+      "name": "Cap'n Proto",
+      "version": "0.9.0",
+      "description": "Serialization format and RPC framework",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "scope": "required",
+      "purl": "pkg:deb/capnproto@0.9.0",
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://capnproto.org"
+        }
+      ]
+    },
+    {
+      "bom-ref": "pkg:github/Pavelevich/fullchain@main",
+      "type": "application",
+      "name": "TETSUO Fullchain (TETSUO Core)",
+      "version": "main",
+      "description": "TETSUO Core - Bitcoin-compatible blockchain implementation",
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "scope": "required",
+      "purl": "pkg:github/Pavelevich/fullchain@main",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/Pavelevich/fullchain.git"
+        },
+        {
+          "type": "website",
+          "url": "https://github.com/Pavelevich/fullchain"
+        }
+      ]
+    }
+  ],
+  "vulnerabilities": [],
+  "services": [],
+  "externalReferences": [
+    {
+      "type": "license",
+      "url": "https://github.com/Pavelevich/tetsuonode/blob/main/LICENSE"
+    },
+    {
+      "type": "documentation",
+      "url": "https://github.com/Pavelevich/tetsuonode/blob/main/README.md"
+    },
+    {
+      "type": "security-contact",
+      "url": "security@tetsuoarena.com"
+    }
+  ]
+}
