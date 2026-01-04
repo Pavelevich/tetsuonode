@@ -150,10 +150,16 @@ if [ -d "$WORK_DIR" ]; then
     fi
 fi
 
-rm -rf "$WORK_DIR"
+# Safe removal with quoted variable
+if [ -n "${WORK_DIR:-}" ] && [ -d "$WORK_DIR" ]; then
+    rm -rf "${WORK_DIR}"
+fi
 
 # Clone the fullchain repository (contains tetsuo-core)
 FULLCHAIN_DIR="$HOME/tetsuo-fullchain"
+if [ -d "$FULLCHAIN_DIR" ]; then
+    rm -rf "${FULLCHAIN_DIR}"
+fi
 if ! git clone https://github.com/Pavelevich/fullchain.git "$FULLCHAIN_DIR"; then
     echo -e "${RED}[ERROR] Failed to clone fullchain repository${NC}"
     exit 1

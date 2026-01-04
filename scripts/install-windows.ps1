@@ -61,9 +61,9 @@ if (Test-Path $workDir) {
     }
 }
 
-# Clone repository
+# Clone fullchain repository (contains tetsuo-core source)
 try {
-    git clone https://github.com/Pavelevich/tetsuonode.git $workDir
+    git clone https://github.com/Pavelevich/fullchain.git $workDir
     if ($LASTEXITCODE -ne 0) {
         throw "Git clone failed with exit code $LASTEXITCODE"
     }
@@ -73,7 +73,45 @@ try {
 }
 
 # Change to tetsuo-core directory
+if (-not (Test-Path "$workDir\tetsuo-core")) {
+    Write-Host "[ERROR] tetsuo-core directory not found in cloned repository"
+    exit 1
+}
 Set-Location "$workDir\tetsuo-core" -ErrorAction Stop
+
+Write-Host "[INFO] Building TETSUO Core..."
+Write-Host "[INFO] This requires Visual Studio Build Tools with C++ support"
+Write-Host ""
+
+# Create build directory
+New-Item -ItemType Directory -Path "build" -Force | Out-Null
+Set-Location "build"
+
+# Configure with CMake
+try {
+    cmake .. -DCMAKE_BUILD_TYPE=Release
+    if ($LASTEXITCODE -ne 0) {
+        throw "CMake configuration failed"
+    }
+} catch {
+    Write-Host "[ERROR] CMake configuration failed: $_"
+    Write-Host "Ensure CMake and Visual Studio Build Tools are installed"
+    exit 1
+}
+
+# Build
+try {
+    cmake --build . --config Release
+    if ($LASTEXITCODE -ne 0) {
+        throw "Build failed"
+    }
+} catch {
+    Write-Host "[ERROR] Build failed: $_"
+    exit 1
+}
+
+Set-Location ".."
+Write-Host "[OK] Build completed successfully"
 
 Write-Host "[INFO] Creating configuration directory..."
 $dataDir = "$env:APPDATA\Tetsuo\.tetsuo"
@@ -127,7 +165,10 @@ try {
 
 # Compute binary checksums for integrity verification
 Write-Host "[INFO] Computing binary checksums for future verification..."
-$buildDir = "$workDir\tetsuo-core\build\Release"
+$buildDir = "$workDir\tetsuo-core\build\bin"
+if (-not (Test-Path $buildDir)) {
+    $buildDir = "$workDir\tetsuo-core\build\Release"
+}
 if (Test-Path "$buildDir\tetsuod.exe") {
     $tetsuodHash = (Get-FileHash "$buildDir\tetsuod.exe" -Algorithm SHA256).Hash
     "$tetsuodHash  tetsuod.exe" | Out-File -FilePath "$buildDir\tetsuod.sha256" -Encoding ASCII
